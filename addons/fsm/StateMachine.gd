@@ -1,6 +1,8 @@
-extends Resource
+extends Reference
 
 class_name StateMachine
+
+signal terminated
 
 # The state machine's target object, node, etc
 #var target = null setget set_target, get_target
@@ -19,7 +21,23 @@ var transitions = {} setget set_transitions
 var current_state = null setget set_current_state
 
 # Internal current state object
-var _current_state = State.new()
+var _current_state = null
+
+var _terminated = false
+
+func terminate() -> void:
+	"""
+	Clear references to target and state machine
+	and send signal
+	"""
+	if _terminated == false:
+		_terminated = true
+		target = null
+		for s in states:
+			states[s]._terminate()
+		states.clear()
+		transitions.clear()
+		emit_signal("terminated")
 
 func set_target(new_target):
 	"""
@@ -72,7 +90,7 @@ func set_current_state(state_id: String) -> void:
 	else:
 		print("Cannot set current state, invalid state: ", state_id)
 
-func get_current_state() -> State:
+func get_current_state() -> String:
 	"""
 	Returns the string id of the current state
 	"""
@@ -161,14 +179,14 @@ func transition(state_id: String) -> void:
 
 	var from_state = get_state(current_state)
 	var to_state = get_state(state_id)
-
+	
 	if from_state.leave_state_enabled:
 		from_state._on_leave_state()
-
+		
 	set_current_state(state_id)
-
-	if to_state.enter_state_enabled:
-		to_state._on_enter_state()
+	
+	if _current_state.enter_state_enabled:
+		_current_state._on_enter_state()
 
 func _process(delta: float) -> void:
 	"""
@@ -191,35 +209,4 @@ func _input(event: InputEvent) -> void:
 	if _current_state.input_enabled:
 		_current_state._input(event)
 
-class State extends Resource:
-	# State ID
-	var id: String
 
-	# Target for the state (object, node, etc)
-	var target
-
-	# Reference to state machine
-	var state_machine: StateMachine
-
-	var process_enabled: bool = true
-	var physics_process_enabled: bool = true
-	var input_enabled: bool = true
-	var enter_state_enabled: bool = true
-	var leave_state_enabled: bool = true
-
-	# State machine callback called during transition when entering this state
-	func _on_enter_state() -> void:
-		push_warning("Unimplemented _on_enter_state")
-
-	# State machine callback called during transition when leaving this state
-	func _on_leave_state() -> void:
-		push_warning("Unimplemented _on_leave_state")
-
-	func _process(delta: float) -> void:
-		push_warning("Unimplemented _process(delta)")
-
-	func _physics_process(delta: float) -> void:
-		push_warning("Unimplemented _physics_process(delta)")
-
-	func _input(event: InputEvent) -> void:
-		push_warning("Unimplemented _input(event)")

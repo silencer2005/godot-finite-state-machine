@@ -21,7 +21,7 @@ func create(config: Dictionary = {}) -> StateMachine:
 
 	if "current_state" in config:
 		sm.set_current_state(config.current_state)
-
+	
 	sm.set_current_state(sm.current_state)
 
 	return sm
