@@ -42,4 +42,4 @@ func _input(event: InputEvent) -> void:
 	push_warning("Unimplemented _input(event)")
 
 func _terminate() -> void:
-	push_warning("Unimplemented _input(event)")
+	pass

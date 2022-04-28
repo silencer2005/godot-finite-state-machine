@@ -35,6 +35,7 @@ func terminate() -> void:
 		target = null
 		for s in states:
 			states[s]._terminate()
+			states[s].clear()
 		states.clear()
 		transitions.clear()
 		emit_signal("terminated")
