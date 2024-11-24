@@ -10,11 +10,11 @@ static func create(config: Dictionary = {}, path: String = "") -> StateMachine:
 	"""
 	var sm = StateMachine.new()
 
-	if "target" in config:
-		sm._set_target(config.target)
-
 	if "states" in config:
 		sm._set_states(config.states, path)
+
+	if "target" in config:
+		sm._set_target(config.target)
 
 	if "transitions" in config:
 		sm._set_transitions(config.transitions)

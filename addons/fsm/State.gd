@@ -20,7 +20,7 @@ var leave_state_enabled: bool = true
 func _init(id: String, sm: StateMachine, _target) -> void:
 	state_id = id
 	state_machine = weakref(sm)
-	if _target != null: target = _target
+	target = _target
 
 func _set_target(t): target = t
 
@@ -50,5 +50,4 @@ func _on_leave_state() -> void: push_warning("Unimplemented _on_leave_state")
 #func _input(event: InputEvent) -> void:
 	#push_warning("Unimplemented _input(event)")
 
-#func _terminate() -> void:
-	#pass
+func _terminate() -> void: push_warning("Unimplemented _terminate")
