@@ -32,12 +32,12 @@ func terminate() -> void:
 	"""
 	if _terminated == false:
 		_terminated = true
-		target = null
 		for s in states:
 			states[s]._terminate()
 			#states[s].clear()
 		states.clear()
 		transitions.clear()
+		target = null
 		emit_signal("terminated")
 
 func _set_target(new_target):
