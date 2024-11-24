@@ -9,7 +9,7 @@ var state_id: String
 var target : set = _set_target
 
 # Reference to state machine
-var state_machine
+var state_machine: WeakRef
 
 #var process_enabled: bool = true
 #var physics_process_enabled: bool = true
@@ -19,7 +19,7 @@ var leave_state_enabled: bool = true
 
 func _init(id: String, sm: StateMachine, _target) -> void:
 	state_id = id
-	state_machine = sm
+	state_machine = weakref(sm)
 	if _target != null: target = _target
 
 func _set_target(t): target = t
@@ -34,9 +34,9 @@ func _set_target(t): target = t
 # State machine callback called during transition when entering this state
 func _on_enter_state() -> void: push_warning("Unimplemented _on_enter_state")
 
-func _execute(): push_warning("Unimplemented _execute")
+func _execute() -> void: push_warning("Unimplemented _execute")
 # run in _process or _process_physics
-func _update(_delta: float): push_warning("Unimplemented _execute")
+func _update(_delta: float) -> void: push_warning("Unimplemented _execute")
 
 # State machine callback called during transition when leaving this state
 func _on_leave_state() -> void: push_warning("Unimplemented _on_leave_state")

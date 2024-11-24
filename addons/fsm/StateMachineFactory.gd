@@ -4,7 +4,7 @@ class_name StateMachineFactory
 
 const StateMachine = preload("StateMachine.gd")
 
-static func create(config: Dictionary = {}) -> StateMachine:
+static func create(config: Dictionary = {}, path: String = "") -> StateMachine:
 	"""
 	Factory method accepting an optional configuration object
 	"""
@@ -14,7 +14,7 @@ static func create(config: Dictionary = {}) -> StateMachine:
 		sm._set_target(config.target)
 
 	if "states" in config:
-		sm._set_states(config.states)
+		sm._set_states(config.states, path)
 
 	if "transitions" in config:
 		sm._set_transitions(config.transitions)

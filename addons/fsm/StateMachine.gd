@@ -10,15 +10,15 @@ var target = null : set = _set_target
 
 # Dictionary of states by state id
 #var states = {} setget set_states, get_states
-var states = {} : set = _set_states
+var states : Dictionary = {}
 
 # Dictionary of valid state transitions
 #var transitions = {} setget set_transitions, get_transitions
-var transitions = {} : set = _set_transitions
+var transitions : Dictionary = {} : set = _set_transitions
 
 # Reference to current state object
 #var current_state = null setget set_current_state, get_current_state
-var current_state = null: set = _set_current_state
+var current_state = null : set = _set_current_state, get = _get_current_state
 
 # Internal current state object
 var _current_state = null
@@ -53,13 +53,13 @@ func get_target():
 	"""
 	return target
 
-func _set_states(data) -> void:
+func _set_states(data, path) -> void:
 	"""
 	Expects an array of state definitions to generate the dictionary of states
 	"""
 	for s in data:
-		if s.id && s.state:
-			var new_state_class = load("res://scripts/states/" + s.state + ".gd")
+		if s.id && s.class:
+			var new_state_class = load("res://" + path + s.class + ".gd")
 			set_state(s.id, new_state_class.new(s.id, self, target))
 
 func get_states() -> Dictionary:
@@ -92,7 +92,7 @@ func _set_current_state(state_id: String) -> void:
 	else:
 		print("Cannot set current state, invalid state: ", state_id)
 
-func get_current_state() -> String:
+func _get_current_state() -> String:
 	"""
 	Returns the string id of the current state
 	"""
@@ -190,6 +190,9 @@ func transition(state_id: String) -> void:
 	
 	if _current_state.enter_state_enabled:
 		_current_state._on_enter_state()
+
+func _execute(): _current_state._execute()
+func _update(_delta: float): _current_state._update(_delta)
 
 #func _process(delta: float) -> void:
 	#"""
