@@ -19,7 +19,7 @@ static func create(config: Dictionary = {}, path: String = "") -> StateMachine:
 	if "transitions" in config:
 		sm._set_transitions(config.transitions)
 
-	if "current_state" in config:
+	if "initial_state" in config:
 		sm._set_current_state(config.current_state)
 	
 	#sm.set_current_state(sm.current_state)
