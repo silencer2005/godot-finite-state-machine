@@ -11,17 +11,15 @@ static func create(config: Dictionary = {}, path: String = "") -> StateMachine:
 	var sm = StateMachine.new()
 
 	if "states" in config:
-		sm._set_states(config.states, path)
+		sm.add_states(config.states, path)
 
 	if "target" in config:
-		sm._set_target(config.target)
+		sm.set_target(config.target)
 
 	if "transitions" in config:
-		sm._set_transitions(config.transitions)
+		sm.set_transitions(config.transitions)
 
 	if "initial_state" in config:
-		sm._set_current_state(config.current_state)
-	
-	#sm.set_current_state(sm.current_state)
+		sm.set_current_state(config.initial_state)
 
 	return sm

@@ -6,7 +6,7 @@ signal terminated
 
 # The state machine's target object, node, etc
 #var target = null setget set_target, get_target
-var target = null : set = _set_target
+var target = null : set = set_target
 
 # Dictionary of states by state id
 #var states = {} setget set_states, get_states
@@ -14,14 +14,13 @@ var states : Dictionary = {}
 
 # Dictionary of valid state transitions
 #var transitions = {} setget set_transitions, get_transitions
-var transitions : Dictionary = {} : set = _set_transitions
+var transitions : Dictionary = {} : set = set_transitions
 
-# Reference to current state object
-#var current_state = null setget set_current_state, get_current_state
-var current_state = null : set = _set_current_state, get = _get_current_state
+# return state_id of current state, a string
+var current_state_id : String : set = set_current_state, get = get_current_state
 
 # Internal current state object
-var _current_state = null
+var state : State = null
 
 var _terminated = false
 
@@ -40,7 +39,7 @@ func terminate() -> void:
 		target = null
 		emit_signal("terminated")
 
-func _set_target(new_target):
+func set_target(new_target):
 	"""
 	Sets the target object, which could be a node or some other object that the states expect
 	"""
@@ -53,12 +52,14 @@ func get_target():
 	"""
 	return target
 
-func _set_states(data, path) -> void:
+func add_states(data, path) -> void:
 	"""
 	Expects an array of state definitions to generate the dictionary of states
 	"""
+	print(data)
 	for s in data:
 		if s.id && s.class:
+			print("class:"+s.class)
 			var new_state_class = load("res://" + path + s.class + ".gd")
 			set_state(s.id, new_state_class.new(s.id, self, target))
 
@@ -68,7 +69,7 @@ func get_states() -> Dictionary:
 	"""
 	return states
 
-func _set_transitions(data) -> void:
+func set_transitions(data) -> void:
 	"""
 	Expects an array of transition definitions to generate the dictionary of transitions
 	"""
@@ -82,21 +83,21 @@ func get_transitions() -> Dictionary:
 	"""
 	return transitions
 
-func _set_current_state(state_id: String) -> void:
+func set_current_state(state_id: String) -> void:
 	"""
 	This is a "just do it" method and does not validate transition change
 	"""
 	if state_id in states:
-		current_state = state_id
-		_current_state = states[state_id]
+		current_state_id = state_id
+		state = states[state_id]
 	else:
 		print("Cannot set current state, invalid state: ", state_id)
 
-func _get_current_state() -> String:
+func get_current_state() -> String:
 	"""
 	Returns the string id of the current state
 	"""
-	return current_state
+	return current_state_id
 
 func set_state_machine(states: Array) -> void:
 	"""
@@ -116,7 +117,7 @@ func set_state(state_id: String, state: State) -> void:
 	#state.state_machine = self
 
 	#if target:
-		#state._set_target(target)
+		#state.set_target(target)
 
 func set_transition(state_id: String, to_states: Array) -> void:
 	"""
@@ -173,26 +174,26 @@ func transition(state_id: String) -> void:
 	Transition to new state by state id.
 	Callbacks will be called on the from and to states if the states have implemented them.
 	"""
-	if not transitions.has(current_state):
-		print("No transitions defined for state %s" % current_state)
+	if not transitions.has(current_state_id):
+		print("No transitions defined for state %s" % current_state_id)
 		return
-	if !state_id in states || !state_id in transitions[current_state].to_states:
-		print("Invalid transition from %s" % current_state, " to %s" % state_id)
+	if !state_id in states || !state_id in transitions[current_state_id].to_states:
+		print("Invalid transition from %s" % current_state_id, " to %s" % state_id)
 		return
 	
-	var from_state = get_state(current_state)
+	var from_state = get_state(current_state_id)
 	var to_state = get_state(state_id)
 	
 	if from_state.leave_state_enabled:
 		from_state._on_leave_state()
 		
-	_set_current_state(state_id)
+	set_current_state(state_id)
 	
-	if _current_state.enter_state_enabled:
-		_current_state._on_enter_state()
+	if state.enter_state_enabled:
+		state._on_enter_state()
 
-func _execute(): _current_state._execute()
-func _update(_delta: float): _current_state._update(_delta)
+func _execute(): state._execute()
+func _update(_delta: float): state._update(_delta)
 
 #func _process(delta: float) -> void:
 	#"""
