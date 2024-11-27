@@ -56,10 +56,8 @@ func add_states(data, path) -> void:
 	"""
 	Expects an array of state definitions to generate the dictionary of states
 	"""
-	print(data)
 	for s in data:
 		if s.id && s.class:
-			print("class:"+s.class)
 			var new_state_class = load("res://" + path + s.class + ".gd")
 			set_state(s.id, new_state_class.new(s.id, self, target))
 
